@@ -1,27 +1,113 @@
-# Jest
+# Angular Test with Jest
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.1.
+En este ejemplo mostramos como usar Jest en Angular.
 
-## Development server
+## Guía para instalar Jest
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+#### 1. Removemos las referencias a Jasmine y Karma
 
-## Code scaffolding
+```code
+npm uninstall karma karma-chrome-launcher karma-coverage karma-jasmine karma-jasmine-html-reporter @types/jasmine jasmine-core
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+#### 2. Eliminar el objeto de prueba del archivo angular.json
 
-## Build
+```code
+"test": {
+"builder": "@angular-devkit/build-angular:karma",
+"options": {
+"polyfills": [
+"zone.js",
+"zone.js/testing"
+],
+"tsConfig": "tsconfig.spec.json",
+"inlineStyleLanguage": "scss",
+"assets": [
+"src/favicon.ico",
+"src/assets"
+],
+"styles": [
+"src/styles.scss"
+],
+"scripts": []
+}
+}
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+#### 3. Instale los paquetes mencionados a continuación:
 
-## Running end-to-end tests
+```code
+npm i --save-dev jest @types/jest  jest-preset-angular
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+#### 4. Crear el archivo setup-jest.ts en la carpeta raíz
 
-## Further help
+```code
+import "jest-preset-angular/setup-jest";
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+#### 5. Para crear el archivo jest.config utilice el siguiente comando:
+
+```code
+ npx jest --init
+
+```
+
+<picture>
+<source media="(prefers-color-scheme:dark)" srcset="src/assets/img.png">
+</picture>
+
+
+![src/assets/img.png](src/assets/img.png)
+
+#### Establece los valores preset y setupFilesAfterEnv en el archivo jest.config.ts que se mencionan a continuación:
+
+```code
+preset: 'jest-preset-angular',
+setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
+```
+
+#### Requerimos instalar ts-node para los archivos de configuración de TypeScript
+
+```code
+npm i ts-node
+```
+
+#### 6. Actualice el archivo tsconfig.spec.json
+
+```code
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "types": [
+      "jest" // 1
+    ],
+    "esModuleInterop": true, // 2 Habilitar la opción es ModuleInterop del compilador TypeScript, de lo contrario. Jest mostrará un montón de advertencias en la consola.
+    "emitDecoratorMetadata": true // 3 Habilitar la opción emitDecoratorMetadata del compilador TypeScript, de lo contrario la inyección de dependencia de Angular no funcionará con Jest.
+  },
+  "include": [
+    "src/**/*.spec.ts",
+    "src/**/*.d.ts"
+  ]
+}
+```
+
+#### 7. Añadir la configuración jest en package.json dentro de la etiqueta script
+
+```code
+ "test": "jest --verbose",
+ "test:coverage": "jest --coverage",
+ "test:watch": "jest --watch"
+
+```
+#### 8. Ejemplo de test realizados:
+
+![src/assets/img.png](src/assets/test-coverage.png)
+![src/assets/img.png](src/assets/test-coverage2.png)
+
+
+[//]: # (fuente: https://codigoencasa.com/pruebas-unitarias-de-angular-con-jest-2023/)
